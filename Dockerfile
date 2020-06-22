@@ -1,5 +1,6 @@
 # This is the layer that can run things
 FROM perl:5.30-slim-buster
+LABEL maintainer="Binary.com <binary@cpan.org>"
 
 # Some standard server-like config used everywhere
 ENV TZ=UTC
