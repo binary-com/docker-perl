@@ -1,0 +1,23 @@
+name: Build image
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build base perl image
+        run: |
+          docker version
+          docker build -t binary-com/perl .
+      - name: Inspect image creation and tag time
+        run: |
+          docker image inspect --format \'{{.Created}}\' binary-com/perl
+          docker image inspect --format \'{{.Metadata.LastTagTime}}\' binary-com/perl
