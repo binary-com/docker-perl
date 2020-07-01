@@ -1,10 +1,14 @@
 # This is the layer that can run things
 FROM debian:buster
-LABEL maintainer="Binary.com <binary@cpan.org>"
+LABEL maintainer="Deriv Services Ltd. <DERIV@cpan.org>"
 
 # Some standard server-like config used everywhere
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PERL_VERSION=5.32.0
+ENV PERL_SHA256=6f436b447cf56d22464f980fac1916e707a040e96d52172984c5d184c09b859b
+ENV CPANM_VERSION=1.7044
+ENV CPANM_SHA256=9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3
 
 # Use an apt-cacher-ng or similar proxy when available during builds
 ARG DEBIAN_PROXY
@@ -19,21 +23,21 @@ RUN [ -n "$DEBIAN_PROXY" ] \
  && apt-get dist-upgrade -y -q --no-install-recommends \
  && apt-get install -y -q --no-install-recommends \
     git openssh-client curl socat ca-certificates gcc make libc6-dev libssl-dev zlib1g-dev xz-utils dumb-init \
- && curl -SL https://www.cpan.org/src/5.0/perl-5.32.0.tar.xz -o perl-5.32.0.tar.xz \
- && echo '6f436b447cf56d22464f980fac1916e707a040e96d52172984c5d184c09b859b *perl-5.32.0.tar.xz' | sha256sum -c - \
- && tar --strip-components=1 -xaf perl-5.32.0.tar.xz -C /usr/src/perl \
- && rm perl-5.32.0.tar.xz \
- && ./Configure -Duse64bitall -Duseshrplib -Dprefix=/opt/perl-5.32.0 -Dman1dir=none -Dman3dir=none -des \
+ && curl -SL https://www.cpan.org/src/5.0/perl-${PERL_VERSION}.tar.xz -o perl-${PERL_VERSION}.tar.xz \
+ && echo "${PERL_SHA256} *perl-${PERL_VERSION}.tar.xz" | sha256sum -c - \
+ && tar --strip-components=1 -xaf perl-${PERL_VERSION}.tar.xz -C /usr/src/perl \
+ && rm perl-${PERL_VERSION}.tar.xz \
+ && ./Configure -Duse64bitall -Duseshrplib -Dprefix=/opt/perl-${PERL_VERSION} -Dman1dir=none -Dman3dir=none -des \
  && make -j$(nproc) \
  && make install \
  && cd /usr/src \
- && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7044.tar.gz \
- && echo '9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3 *App-cpanminus-1.7044.tar.gz' | sha256sum -c - \
- && tar -xzf App-cpanminus-1.7044.tar.gz \
- && rm App-cpanminus-1.7044.tar.gz \
- && cd App-cpanminus-1.7044 && /opt/perl-5.32.0/bin/perl bin/cpanm . \
+ && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-${CPANM_VERSION}.tar.gz \
+ && echo "${CPANM_SHA256} *App-cpanminus-${CPANM_VERSION}.tar.gz" | sha256sum -c - \
+ && tar -xzf App-cpanminus-${CPANM_VERSION}.tar.gz \
+ && rm App-cpanminus-${CPANM_VERSION}.tar.gz \
+ && cd App-cpanminus-${CPANM_VERSION} && /opt/perl-${PERL_VERSION}/bin/perl bin/cpanm . \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
- && rm -fr ./cpanm /root/.cpanm /usr/src/perl /usr/src/App-cpanminus-1.7044* /tmp/* \
+ && rm -fr ./cpanm /root/.cpanm /usr/src/perl /usr/src/App-cpanminus-${CPANM_VERSION}* /tmp/* \
 # Locale support is probably quite useful in some cases, but
 # let's let individual builds decide that via aptfile config
 # && echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen \
@@ -44,7 +48,7 @@ RUN [ -n "$DEBIAN_PROXY" ] \
 
 WORKDIR /app/
 
-ENV PATH="/opt/perl-5.32.0/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin"
+ENV PATH="/opt/perl-${PERL_VERSION}/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin"
 
 ONBUILD ADD cpanfile aptfile /app/
 
