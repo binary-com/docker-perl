@@ -16,8 +16,9 @@ jobs:
       - name: Build base perl image
         run: |
           docker version
-          docker build -t binary-com/perl .
+          [ -n $DEBIAN_PROXY ] && docker_build_opts="--build-arg=DEBIAN_PROXY=${DEBIAN_PROXY}"
+          docker build "$docker_build_opts" -t deriv/perl .
       - name: Inspect image creation and tag time
         run: |
-          docker image inspect --format \'{{.Created}}\' binary-com/perl
-          docker image inspect --format \'{{.Metadata.LastTagTime}}\' binary-com/perl
+          docker image inspect --format \'{{.Created}}\' deriv/perl
+          docker image inspect --format \'{{.Metadata.LastTagTime}}\' deriv/perl
