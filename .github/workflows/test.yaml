@@ -1,0 +1,24 @@
+name: Build image
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build base perl image
+        run: |
+          docker version
+          [ -n $DEBIAN_PROXY ] && docker_build_opts="--build-arg=DEBIAN_PROXY=${DEBIAN_PROXY}"
+          docker build "$docker_build_opts" -t deriv/perl .
+      - name: Inspect image creation and tag time
+        run: |
+          docker image inspect --format \'{{.Created}}\' deriv/perl
+          docker image inspect --format \'{{.Metadata.LastTagTime}}\' deriv/perl
