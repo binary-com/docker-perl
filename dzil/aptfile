@@ -1,2 +1,9 @@
+gcc
+git
+make
+openssh-client
+libc6-dev
+libssl-dev
+zlib1g-dev
 libncurses-dev
 libreadline-dev
