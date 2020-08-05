@@ -66,6 +66,8 @@ ONBUILD RUN if [ -r /app/aptfile ]; then \
 
 ONBUILD ADD . /app/
 
+ONBUILD RUN rm -f /etc/apt/apt.conf.d/30proxy
+
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 
 CMD [ "perl", "app.pl" ]
