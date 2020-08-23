@@ -35,6 +35,9 @@ workflows:
           dockerfiles: Dockerfile:dzil/Dockerfile
           # Don't pin apt versions, we'll never remember to update them
           ignore-rules: DL3008
+          filters:
+            branches:
+              only: /^master$/
   tagged:
     jobs:
       - docker/publish:
@@ -50,10 +53,6 @@ workflows:
           filters:
             branches:
               only: /^master$/
-      - docker/hadolint:
-          dockerfiles: Dockerfile:dzil/Dockerfile
-          # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008
   daily:
     jobs:
       - docker/publish:
@@ -63,6 +62,10 @@ workflows:
           deploy: false
           image: deriv/dzil
           path: dzil
+      - docker/hadolint:
+          dockerfiles: Dockerfile:dzil/Dockerfile
+          # Don't pin apt versions, we'll never remember to update them
+          ignore-rules: DL3008
     triggers:
       - schedule:
           cron: 05 19 * * *
