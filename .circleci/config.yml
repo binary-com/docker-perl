@@ -15,7 +15,7 @@ workflows:
       - docker/hadolint:
           dockerfiles: Dockerfile:dzil/Dockerfile
           # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008
+          ignore-rules: DL3008,SC2046,DL3003,DL4006
   merged:
     jobs:
       - docker/publish:
@@ -34,7 +34,7 @@ workflows:
       - docker/hadolint:
           dockerfiles: Dockerfile:dzil/Dockerfile
           # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008
+          ignore-rules: DL3008,SC2046,DL3003,DL4006
           filters:
             branches:
               only: /^master$/
@@ -65,7 +65,7 @@ workflows:
       - docker/hadolint:
           dockerfiles: Dockerfile:dzil/Dockerfile
           # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008
+          ignore-rules: DL3008,SC2046,DL3003,DL4006
     triggers:
       - schedule:
           cron: 05 19 * * *
