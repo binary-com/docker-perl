@@ -1,0 +1,8 @@
+libncurses-dev
+libreadline-dev
+git
+gcc
+make
+libc6-dev
+openssh-client
+patch
