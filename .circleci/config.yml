@@ -31,10 +31,9 @@ workflows:
     - images:
         context: perl
     - docker/hadolint:
-        dockerfiles: ./Dockerfile,dzil/Dockerfile
+        dockerfiles: Dockerfile,dzil/Dockerfile
         # Don't pin apt versions, we'll never remember to update them
         ignore-rules: DL3008
-        artifacts-path: /disable-entirely
   merged:
     jobs:
     - images:
