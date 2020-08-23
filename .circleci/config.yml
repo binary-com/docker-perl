@@ -23,8 +23,10 @@ workflows:
   version: 2
   build-workflow:
     jobs:
-      - perl
+      - perl:
+          context: perl
       - dzil:
+          context: perl
           requires:
               - perl
       - docker/hadolint:
