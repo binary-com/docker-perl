@@ -1,0 +1,65 @@
+version: 2.1
+orbs:
+  docker: circleci/docker@0.5.18
+jobs:
+  images:
+    parameters:
+      push:
+        type: boolean
+        default: false
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - run: echo "push flag is << parameters.push >>"
+      - checkout
+      - setup_remote_docker
+      - run: |
+          docker login -u circle4regentmarkets -p "$DOCKERHUB_PASSWORD"
+
+      - run: docker build -t deriv/perl:${CIRCLE_TAG:-latest} .
+      - run: docker build -t deriv/dzil:${CIRCLE_TAG:-latest} dzil
+      - when:
+          condition: <<parameters.push>>
+          steps:
+            - run: echo 'pushing images'
+            - run: docker push deriv/perl:${CIRCLE_TAG:-latest}
+            - run: docker push deriv/dzil:${CIRCLE_TAG:-latest}
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+    - images:
+        context: perl
+    - docker/hadolint:
+        dockerfiles: ./Dockerfile,dzil/Dockerfile
+        # Don't pin apt versions, we'll never remember to update them
+        ignore-rules: DL3008
+        artifacts-path: /disable-entirely
+  merged:
+    jobs:
+    - images:
+        context: perl
+        push: true
+        filters:
+          branches:
+            only: /^master$/
+  tagged:
+    jobs:
+    - images:
+        context: perl
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^V\d+_.*/
+  daily:
+    jobs:
+    - images:
+        context: perl
+    triggers:
+    - schedule:
+        cron: 05 19 * * *
+        filters:
+          branches:
+            only:
+            - master
