@@ -48,6 +48,7 @@ COPY prepare-apt-cpan.sh /usr/local/bin/
 ENV PATH="/opt/perl-${PERL_VERSION}/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin"
 
 ONBUILD ARG HTTP_PROXY
+ONBUILD WORKDIR /app/
 ONBUILD COPY cpanfile aptfile /app/
 
 # Install everything in the aptfile first, as system deps, then
