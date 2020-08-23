@@ -9,7 +9,8 @@ jobs:
         - checkout
         - run:
             command: |
-              echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
+              echo Log in as "$DOCKER_LOGIN"
+              echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
               docker build -t deriv/perl .
             name: Build deriv/perl
     dzil:
