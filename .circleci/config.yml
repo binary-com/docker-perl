@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  docker: circleci/docker@0.5.18
+  docker: circleci/docker@1.4.0
 jobs:
   images:
     parameters:
