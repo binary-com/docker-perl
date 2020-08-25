@@ -1,96 +1,52 @@
 version: 2.1
 orbs:
   docker: circleci/docker@1.4.0
+
 jobs:
-    perl:
+    build_and_publish:
       executor: docker/docker
+      parameters:
+        push:
+          type: boolean
+          default: false
+        image:
+          type: string
+          default: deriv/perl
+        path:
+          type: string
+          default: .
+        docker-context:
+          type: string
+          default: .
       steps:
         - setup_remote_docker
         - checkout
         - docker/build:
-            image: deriv/perl
-    dzil:
-      executor: docker/docker
-      steps:
-        - setup_remote_docker
-        - checkout
-        - docker/build:
-            docker-context: dzil
-            path: dzil
-            image: deriv/dzil
+            image: <<parameters.image>>
+            path: <<parameters.path>>
+            docker-context: <<parameters.docker-context>>
+        - when:
+            condition: <<parameters.push>>
+            steps:
+              - docker/push:
+                  image: <<parameters.image>>
 workflows:
   version: 2
   build-workflow:
     jobs:
-      - perl:
+      - build_and_publish:
           context: perl
-      - dzil:
+          name: perl
+      - build_and_publish:
           context: perl
           requires:
               - perl
+          name: dzil
+          image: deriv/dzil
+          path: dzil/
+          docker-context: dzil/
       - docker/hadolint:
           dockerfiles: Dockerfile:dzil/Dockerfile
           # Don't pin apt versions, we'll never remember to update them
           ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006
-      - docker/publish:
-          context: perl
-          deploy: true
-          image: deriv/perl
-          tag: 'unstable'
-  merged:
-    jobs:
-      - docker/publish:
-          deploy: true
-          image: deriv/perl
-          filters:
-            branches:
-              only: /^master$/
-      - docker/publish:
-          deploy: true
-          image: deriv/dzil
-          path: dzil
-          filters:
-            branches:
-              only: /^master$/
-      - docker/hadolint:
-          dockerfiles: Dockerfile:dzil/Dockerfile
-          # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006
-          filters:
-            branches:
-              only: /^master$/
-  tagged:
-    jobs:
-      - docker/publish:
-          deploy: true
-          image: deriv/perl
-          filters:
-            branches:
-              only: /^master$/
-      - docker/publish:
-          deploy: true
-          image: deriv/dzil
-          path: dzil
-          filters:
-            branches:
-              only: /^master$/
-  daily:
-    jobs:
-      - docker/publish:
-          deploy: false
-          image: deriv/perl
-      - docker/publish:
-          deploy: false
-          image: deriv/dzil
-          path: dzil
-      - docker/hadolint:
-          dockerfiles: Dockerfile:dzil/Dockerfile
-          # Don't pin apt versions, we'll never remember to update them
-          ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006
-    triggers:
-      - schedule:
-          cron: 05 19 * * *
-          filters:
-            branches:
-              only:
-              - master
+ 
