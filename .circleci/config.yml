@@ -57,7 +57,7 @@ jobs:
           steps:
             - run:
                 name: DockeHub login
-                command: docker login --username "$DOCKER_LOGIN" --password "$DOCKER_PASSWORD"
+                command: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
             - docker/push:
                 image: <<parameters.image>>
 workflows:
