@@ -46,7 +46,6 @@ jobs:
         type: string
         default: .
     steps:
-      - setup_remote_docker
       - checkout
       - docker/build:
           image: <<parameters.image>>
@@ -61,7 +60,7 @@ workflows:
   version: 2
   build-workflow:
     jobs:
-      - build_and_publish: *options_workflow_perl
+      - build_and_publish: *options_workflow_perl_push
       - build_and_publish: *options_workflow_dzil
       - docker/hadolint: *options_hadolint
           
