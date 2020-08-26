@@ -15,7 +15,6 @@ aliases:
       name: perl
   - &options_workflow_perl_push
       push: true
-      filters: *filter_only_master
       <<: *options_workflow_perl
   - &options_workflow_dzil
       requires:
