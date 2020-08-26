@@ -46,6 +46,7 @@ jobs:
         default: .
     steps:
       - checkout
+      - setup_remote_docker
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
