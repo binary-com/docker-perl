@@ -56,7 +56,7 @@ jobs:
           condition: <<parameters.push>>
           steps:
             - run:
-                name: DockeHub login
+                name: Docker Hub login
                 command: docker login --username "$DOCKER_LOGIN" --password "$DOCKER_PASSWORD"
             - docker/push:
                 image: <<parameters.image>>
