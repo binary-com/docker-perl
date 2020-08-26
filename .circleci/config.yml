@@ -15,6 +15,7 @@ aliases:
       name: perl
   - &options_workflow_perl_push
       push: true
+      filters: *filter_only_master
       <<: *options_workflow_perl
   - &options_workflow_dzil
       requires:
@@ -45,8 +46,8 @@ jobs:
         type: string
         default: .
     steps:
-      - checkout
       - setup_remote_docker
+      - checkout
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
@@ -63,7 +64,7 @@ workflows:
   version: 2
   build-workflow:
     jobs:
-      - build_and_publish: *options_workflow_perl_push
+      - build_and_publish: *options_workflow_perl
       - build_and_publish: *options_workflow_dzil
       - docker/hadolint: *options_hadolint
           
