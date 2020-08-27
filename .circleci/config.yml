@@ -60,6 +60,7 @@ jobs:
                 command: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
             - docker/push:
                 image: <<parameters.image>>
+                tag: 'latest'
 workflows:
   version: 2
   build-workflow:
