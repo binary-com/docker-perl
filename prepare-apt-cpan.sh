@@ -21,25 +21,23 @@ if [ -d /app/vendors ]; then
     # but if the vendors directory is empty it'll 
     # cause an issue it's nicer to let the build
     # pass if vendors is empty
+    PERL5LIB=''
     for dir in `ls /app/vendors`; do
         if [ -z "$(ls -A /app/vendors/$dir)" ]; then
             echo -e "It seems that your git submodules are not initialized correctly\nif you are not using submodules please delete 'vendors' subdirctory" 1>&2
             exit 1
         fi
 
+        PERL5LIB=$PERL5LIB:/app/vendors/$dir/lib
         cd /app/vendors/$dir
 
         if [ -e cpanfile ]; then
             cpanm --notest --installdeps .
             rm -r ~/.cpanm
         fi
-
-        if [ -e dist.ini ]; then
-            dzil authordeps --missing | cpanm --notest
-            dzil install
-            dzil clean
-        fi
     done
+
+    echo "export PERL5LIB=$PERL5LIB" >> ~/.bashrc
 fi
 
 apt-get purge -y -q $(perl -le'@seen{split " ", "" . do { local ($/, @ARGV) = (undef, "/app/aptfile"); <> }} = () if -r "aptfile"; print for grep { !exists $seen{$_} } qw(make gcc git openssh-client libc6-dev libssl-dev zlib1g-dev patch)')
