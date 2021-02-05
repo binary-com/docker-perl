@@ -13,18 +13,32 @@ cpanm --notest --installdeps .
 
 rm -r ~/.cpanm
 
+# a convention to allow developers to include non-standard code modules in 
+# the vendors directory as git submodules 
+
 if [ -d /app/vendors ]; then
-    for dir in /app/vendors/*; do
-        if [ ~ `ls -A $dir` ]; then
+    # /app/vendors/* will give us canonical paths
+    # but if the vendors directory is empty it'll 
+    # cause an issue it's nicer to let the build
+    # pass if vendors is empty
+    for dir in `ls /app/vendors`; do
+        if [ -z "$(ls -A /app/vendors/$dir)" ]; then
             echo -e "It seems that your git submodules are not initialized correctly\nif you are not using submodules please delete 'vendors' subdirctory" 1>&2
             exit 1
         fi
-        cd $dir
-        dzil authordeps --missing | cpanm
-        cpanm --notest --installdeps .
-        rm -r ~/.cpanm
-        dzil install
-        dzil clean
+
+        cd /app/vendors/$dir
+
+        if [ -e cpanfile ]; then
+            cpanm --notest --installdeps .
+            rm -r ~/.cpanm
+        fi
+
+        if [ -e dist.ini ]; then
+            dzil authordeps --missing | cpanm --notest
+            dzil install
+            dzil clean
+        fi
     done
 fi
 
