@@ -9,7 +9,7 @@ aliases:
   - &options_hadolint
       dockerfiles: Dockerfile:dzil/Dockerfile
       # Don't pin apt versions, we'll never remember to update them
-      ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006
+      ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006,DL3005
   - &options_workflow_perl
       context: perl
       name: perl
