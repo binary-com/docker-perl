@@ -9,7 +9,7 @@ if [ -r /app/aptfile ]; then
     apt-get -y -q --no-install-recommends install $(cat /app/aptfile)
 fi
 
-cpanm --notest --installdeps .
+cpanm --notest --installdeps --with-recommends .
 
 rm -r ~/.cpanm
 
@@ -32,7 +32,7 @@ if [ -d /app/vendors ]; then
         cd /app/vendors/$dir
 
         if [ -e cpanfile ]; then
-            cpanm --notest --installdeps .
+            cpanm --notest --installdeps --with-recommends .
             rm -r ~/.cpanm
         fi
     done
