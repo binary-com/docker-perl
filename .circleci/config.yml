@@ -83,8 +83,8 @@ workflows:
       - build_and_publish: *options_workflow_dzil_push
   daily:
     jobs:
-      - build_and_publish: *options_workflow_perl
-      - build_and_publish: *options_workflow_dzil
+      - build_and_publish: *options_workflow_perl_push
+      - build_and_publish: *options_workflow_dzil_push
       - docker/hadolint: *options_hadolint
     triggers:
       - schedule:
