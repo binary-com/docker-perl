@@ -48,7 +48,6 @@ jobs:
         type: string
         default: .
     steps:
-      - setup_remote_docker
       - checkout
       - docker/build:
           image: <<parameters.image>>
