@@ -1,12 +1,12 @@
 # This is the layer that can run things
-FROM debian:buster
+FROM debian:stable
 LABEL maintainer="Deriv Services Ltd. <DERIV@cpan.org>"
 
 # Some standard server-like config used everywhere
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PERL_VERSION=5.32.1
-ENV PERL_SHA256=57cc47c735c8300a8ce2fa0643507b44c4ae59012bfdad0121313db639e02309
+ENV PERL_VERSION=5.34.0
+ENV PERL_SHA256=82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded
 ENV CPANM_VERSION=1.7044
 ENV CPANM_SHA256=9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3
 
@@ -24,6 +24,7 @@ RUN [ -n "$DEBIAN_PROXY" ] \
  && apt-get install -y -q --no-install-recommends \
     git openssh-client curl socat ca-certificates gcc make libc6-dev libssl-dev zlib1g-dev xz-utils dumb-init patch \
  && curl -SL https://www.cpan.org/src/5.0/"perl-${PERL_VERSION}".tar.xz -o "perl-${PERL_VERSION}".tar.xz \
+ && sha256sum perl-${PERL_VERSION}.tar.xz \
  && echo "${PERL_SHA256} *perl-${PERL_VERSION}.tar.xz" | sha256sum -c - \
  && tar --strip-components=1 -xaf "perl-${PERL_VERSION}".tar.xz -C /usr/src/perl \
  && rm "perl-${PERL_VERSION}".tar.xz \

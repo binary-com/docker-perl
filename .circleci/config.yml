@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  docker: circleci/docker@1.4.0
+  docker: circleci/docker@1.7.0
 aliases:
   - &filter_only_master
       branches:
@@ -31,7 +31,9 @@ aliases:
       <<: *options_workflow_dzil
 jobs:
   build_and_publish:
-    executor: docker/docker
+    executor:
+      name: docker/machine
+      image: ubuntu-2004:202107-02
     parameters:
       push:
         type: boolean
@@ -46,7 +48,6 @@ jobs:
         type: string
         default: .
     steps:
-      - setup_remote_docker
       - checkout
       - docker/build:
           image: <<parameters.image>>
