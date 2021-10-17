@@ -1,5 +1,5 @@
 # This is the layer that can run things
-FROM debian:buster
+FROM debian:stable
 LABEL maintainer="Deriv Services Ltd. <DERIV@cpan.org>"
 
 # Some standard server-like config used everywhere
