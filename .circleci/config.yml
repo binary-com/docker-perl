@@ -31,7 +31,9 @@ aliases:
       <<: *options_workflow_dzil
 jobs:
   build_and_publish:
-    executor: docker/docker
+    executor:
+      name: docker/machine
+      image: ubuntu-2004:202107-02
     parameters:
       push:
         type: boolean
