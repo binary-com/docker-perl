@@ -24,6 +24,7 @@ RUN [ -n "$DEBIAN_PROXY" ] \
  && apt-get install -y -q --no-install-recommends \
     git openssh-client curl socat ca-certificates gcc make libc6-dev libssl-dev zlib1g-dev xz-utils dumb-init patch \
  && curl -SL https://www.cpan.org/src/5.0/"perl-${PERL_VERSION}".tar.xz -o "perl-${PERL_VERSION}".tar.xz \
+ && sha256sum perl-${PERL_VERSION}.tar.xz \
  && echo "${PERL_SHA256} *perl-${PERL_VERSION}.tar.xz" | sha256sum -c - \
  && tar --strip-components=1 -xaf "perl-${PERL_VERSION}".tar.xz -C /usr/src/perl \
  && rm "perl-${PERL_VERSION}".tar.xz \
