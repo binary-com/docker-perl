@@ -1,5 +1,5 @@
-ARG HTTP_PROXY
 FROM deriv/perl
+ARG http_proxy
 
 WORKDIR /app/
 COPY pod-inherit.patch .
