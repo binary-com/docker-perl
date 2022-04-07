@@ -7,23 +7,23 @@ ENV TZ=UTC
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PERL_VERSION=5.34.1
 ENV PERL_SHA256=6d52cf833ff1af27bb5e986870a2c30cec73c044b41e3458cd991f94374039f7
-ENV CPANM_VERSION=1.7044
-ENV CPANM_SHA256=9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3
+ENV CPANM_VERSION=1.7045
+ENV CPANM_SHA256=ac4e4adc23fec0ab54f088aca511f5a57d95e6c97a12a1cb98eed1fe0fe0e99c
 
 # Use an apt-cacher-ng or similar proxy when available during builds
-ARG DEBIAN_PROXY
-ARG HTTP_PROXY
+ARG http_proxy
 
 WORKDIR /usr/src/perl
 
-RUN [ -n "$DEBIAN_PROXY" ] \
- && (echo "Acquire::http::Proxy \"http://$DEBIAN_PROXY\";" > /etc/apt/apt.conf.d/30proxy) \
+RUN [ -n "$http_proxy" ] \
+ && (echo "Acquire::http::Proxy \"$http_proxy\";" > /etc/apt/apt.conf.d/30proxy) \
  || echo "No local Debian proxy configured" \
  && apt-get update \
  && apt-get dist-upgrade -y -q --no-install-recommends \
  && apt-get install -y -q --no-install-recommends \
     git openssh-client curl socat ca-certificates gcc make libc6-dev libssl-dev zlib1g-dev xz-utils dumb-init patch \
- && curl -SL https://www.cpan.org/src/5.0/"perl-${PERL_VERSION}".tar.xz -o "perl-${PERL_VERSION}".tar.xz \
+# Plain HTTP here so that we can cache - we're verifying SHA256 anyway
+ && curl -SLO http://www.cpan.org/src/5.0/"perl-${PERL_VERSION}".tar.xz \
  && sha256sum perl-${PERL_VERSION}.tar.xz \
  && echo "${PERL_SHA256} *perl-${PERL_VERSION}.tar.xz" | sha256sum -c - \
  && tar --strip-components=1 -xaf "perl-${PERL_VERSION}".tar.xz -C /usr/src/perl \
@@ -32,7 +32,8 @@ RUN [ -n "$DEBIAN_PROXY" ] \
  && make -j$(nproc) \
  && make install \
  && cd /usr/src \
- && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-${CPANM_VERSION}.tar.gz \
+# Plain HTTP here so that we can cache - we're verifying SHA256 anyway
+ && curl -SLO http://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-${CPANM_VERSION}.tar.gz \
  && echo "${CPANM_SHA256} *App-cpanminus-${CPANM_VERSION}.tar.gz" | sha256sum -c - \
  && tar -xzf "App-cpanminus-${CPANM_VERSION}".tar.gz \
  && rm "App-cpanminus-${CPANM_VERSION}".tar.gz \
