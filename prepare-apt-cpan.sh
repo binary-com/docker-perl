@@ -5,6 +5,11 @@
 set -e
 
 if [ -r /app/aptfile ]; then
+    if [ -n "$http_proxy" ]; then
+        echo "Acquire::http::Proxy \"$http_proxy\";" > /etc/apt/apt.conf.d/30proxy
+    else
+        echo "No local Debian proxy configured"
+    fi
     apt-get -y -q update
     apt-get -y -q --no-install-recommends install $(cat /app/aptfile)
 fi
@@ -41,5 +46,4 @@ if [ -d /app/vendors ]; then
 fi
 
 apt-get purge -y -q $(perl -le'@seen{split " ", "" . do { local ($/, @ARGV) = (undef, "/app/aptfile"); <> }} = () if -r "aptfile"; print for grep { !exists $seen{$_} } qw(make gcc git openssh-client libc6-dev libssl-dev zlib1g-dev patch)')
-rm -rf /var/lib/apt/lists/* /var/cache/apt/* /root/.cpanm /tmp/*
-
+rm -rf /var/lib/apt/lists/* /var/cache/apt/* /root/.cpanm /tmp/* /etc/apt/apt.conf.d/30proxy
