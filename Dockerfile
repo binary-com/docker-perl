@@ -28,7 +28,7 @@ RUN [ -n "$http_proxy" ] \
  && echo "${PERL_SHA256} *perl-${PERL_VERSION}.tar.xz" | sha256sum -c - \
  && tar --strip-components=1 -xaf "perl-${PERL_VERSION}".tar.xz -C /usr/src/perl \
  && rm "perl-${PERL_VERSION}".tar.xz \
- && ./Configure -Duse64bitall -Duseshrplib -Dprefix=/opt/"perl-${PERL_VERSION}" -Dman1dir=none -Dman3dir=none -DSILENT_NO_TAINT_SUPPORT -des \
+ && ./Configure -D$(if [ `echo x64` == "armhf" ]; then echo "64bitint"; else echo "64bitall"; fi) -Duseshrplib -Dprefix=/opt/"perl-${PERL_VERSION}" -Dman1dir=none -Dman3dir=none -DSILENT_NO_TAINT_SUPPORT -des \
  && make -j$(nproc) \
  && make install \
  && cd /usr/src \
