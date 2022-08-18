@@ -4,19 +4,17 @@
 
 set -e
 
-if [ -r /app/aptfile ]; then
-    if [ -n "$http_proxy" ]; then
-        echo "Acquire::http::Proxy \"$http_proxy\";" > /etc/apt/apt.conf.d/30proxy
-    else
-        echo "No local Debian proxy configured"
-    fi
-    apt-get -y -q update
-    apt-get -y -q --no-install-recommends install $(cat /app/aptfile)
+DEBIAN_DEPS="make gcc git openssh-client libc6-dev libssl-dev zlib1g-dev patch"
+
+if [ -n "$http_proxy" ]; then
+    echo "Acquire::http::Proxy \"$http_proxy\";" > /etc/apt/apt.conf.d/30proxy
+else
+    echo "No local Debian proxy configured"
 fi
+apt-get -y -q update
+apt-get -y -q --no-install-recommends install $(cat /app/aptfile || :) $DEBIAN_DEPS
 
 cpanm --notest --installdeps --with-recommends .
-
-rm -r ~/.cpanm
 
 # a convention to allow developers to include non-standard code modules in 
 # the vendors directory as git submodules 
