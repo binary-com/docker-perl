@@ -36,12 +36,14 @@ if [ -d /app/vendors ]; then
 
         if [ -e cpanfile ]; then
             cpanm --notest --installdeps --with-recommends .
-            rm -r ~/.cpanm
         fi
     done
 
     echo "export PERL5LIB=$PERL5LIB" >> ~/.bashrc
 fi
 
-apt-get purge -y -q $(perl -le'@seen{split " ", "" . do { local ($/, @ARGV) = (undef, "/app/aptfile"); <> }} = () if -r "aptfile"; print for grep { !exists $seen{$_} } qw(make gcc git openssh-client libc6-dev libssl-dev zlib1g-dev patch)')
+rm -rf ~/.cpanm
+
+# Remove any development dependencies we installed, with the exception of those explicitly listed in `aptfile`
+apt-get purge -y -q $(perl -le'@seen{split " ", "" . do { local ($/, @ARGV) = (undef, "/app/aptfile"); <> }} = () if -r "/app/aptfile"; print for grep { !exists $seen{$_} } qw('"$DEBIAN_DEPS"')')
 rm -rf /var/lib/apt/lists/* /var/cache/apt/* /root/.cpanm /tmp/* /etc/apt/apt.conf.d/30proxy
