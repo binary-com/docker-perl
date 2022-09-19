@@ -25,8 +25,6 @@ aliases:
       filters: *filter_only_master
       <<: *options_workflow_perl
   - &options_workflow_dzil
-      requires:
-        - perl
       context: perl
       image: deriv/dzil
       path: dzil/
