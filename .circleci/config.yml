@@ -9,6 +9,9 @@ jobs:
   build:
     docker:
       - image: cimg/base:stable
+        auth:
+          username: $DOCKER_LOGIN
+          password: $DOCKER_PASSWORD
     steps:
       - setup_remote_docker:
           version: 20.10.11
