@@ -93,13 +93,17 @@ jobs:
         type: string
         default: .
     steps:
-      - run: echo build
+      - configure-docker-credentials-store
+      - install-docker-credential-helper
+      - docker/check
+      - dockerlint
       - when:
           condition: <<parameters.push>>
           steps:
             - run:
                 name: Docker Hub login
-                command: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+                command: |
+                  echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
             - deploy:
                 name: "Upload manifest to registry"
                 command: |
