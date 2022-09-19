@@ -38,6 +38,7 @@ jobs:
     executor:
       name: docker/machine
       image: ubuntu-2204:2022.07.1
+    machine: true
     parameters:
       image:
         type: string
@@ -48,14 +49,31 @@ jobs:
       docker-context:
         type: string
         default: .
+      push:
+        type: boolean
+        default: false
+    environment:
+      DOCKER_REGISTRY: <<pipeline.parameters.registry>>
     steps:
       - checkout
+      - docker/check:
+          docker-username: DOCKER_LOGIN
+          docker-password: DOCKER_PASSWORD
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
           docker-context: <<parameters.docker-context>>
           tag: amd64-<<pipeline.parameters.tag>>
+      - when:
+          condition: <<parameters.push>>
+          steps:
+            - deploy:
+                name: "Upload image to registry"
+                command: |
+                  set -eu
+                  docker push ${DOCKER_REGISTRY}/<<parameters.image>>:amd64-<<pipeline.parameters.tag>>
   build_arm64:
+    machine: true
     executor:
       name: docker/machine
       image: ubuntu-2204:2022.07.1
@@ -70,13 +88,29 @@ jobs:
       docker-context:
         type: string
         default: .
+      push:
+        type: boolean
+        default: false
+    environment:
+      DOCKER_REGISTRY: <<pipeline.parameters.registry>>
     steps:
       - checkout
+      - docker/check:
+          docker-username: DOCKER_LOGIN
+          docker-password: DOCKER_PASSWORD
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
           docker-context: <<parameters.docker-context>>
           tag: arm64-<<pipeline.parameters.tag>>
+      - when:
+          condition: <<parameters.push>>
+          steps:
+            - deploy:
+                name: "Upload image to registry"
+                command: |
+                  set -eu
+                  docker push ${DOCKER_REGISTRY}/<<parameters.image>>:arm64-<<pipeline.parameters.tag>>
   publish:
     docker:
       - image: cimg/base:2022.09
