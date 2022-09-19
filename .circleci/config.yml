@@ -52,8 +52,6 @@ jobs:
         default: .
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
@@ -76,8 +74,6 @@ jobs:
         default: .
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - docker/build:
           image: <<parameters.image>>
           path: <<parameters.path>>
