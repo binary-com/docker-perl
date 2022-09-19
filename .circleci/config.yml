@@ -125,6 +125,7 @@ workflows:
       - build_arm64: *options_workflow_perl
       - publish:
           <<: *options_workflow_perl
+          context: perl
           requires:
             - build_amd64
             - build_arm64
