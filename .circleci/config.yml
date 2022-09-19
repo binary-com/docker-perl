@@ -13,5 +13,5 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - checkout
-      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push docker.io/deriv/perl:multi-platform .
-      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push docker.io/deriv/dzil:multi-platform dzil/
+      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push -t docker.io/deriv/perl:multi-platform .
+      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push -t docker.io/deriv/dzil:multi-platform dzil/
