@@ -78,7 +78,11 @@ jobs:
           docker-context: <<parameters.docker-context>>
           tag: arm64-<<pipeline.parameters.tag>>
   publish:
-    executor: docker/docker
+    docker:
+      - image: cimg/base:2022.09
+        auth:
+          username: ${DOCKER_LOGIN}
+          password: ${DOCKER_PASSWORD}
     parameters:
       image:
         type: string
@@ -93,10 +97,6 @@ jobs:
         type: string
         default: .
     steps:
-      - docker/configure-docker-credentials-store
-      - docker/install-docker-credential-helper
-      - docker/check
-      - docker/dockerlint
       - when:
           condition: <<parameters.push>>
           steps:
