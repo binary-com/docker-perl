@@ -93,10 +93,10 @@ jobs:
         type: string
         default: .
     steps:
-      - configure-docker-credentials-store
-      - install-docker-credential-helper
+      - docker/configure-docker-credentials-store
+      - docker/install-docker-credential-helper
       - docker/check
-      - dockerlint
+      - docker/dockerlint
       - when:
           condition: <<parameters.push>>
           steps:
