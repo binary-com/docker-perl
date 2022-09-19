@@ -96,7 +96,10 @@ jobs:
       docker-context:
         type: string
         default: .
+    environment:
+      DOCKER_REGISTRY: <<pipeline.parameters.registry>>
     steps:
+      - run: echo Publish image under ${DOCKER_LOGIN}
       - when:
           condition: <<parameters.push>>
           steps:
