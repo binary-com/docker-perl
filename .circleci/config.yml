@@ -136,9 +136,13 @@ workflows:
       - build_amd64:
           <<: *options_workflow_dzil
           name: dzil_amd64
+          requires:
+            - publish_perl
       - build_arm64:
           <<: *options_workflow_dzil
           name: dzil_arm64
+          requires:
+            - publish_perl
       - publish:
           <<: *options_workflow_dzil
           name: publish_dzil
