@@ -124,6 +124,7 @@ workflows:
           requires:
             - build_amd64
             - build_arm64
+          push: true
       - docker/hadolint: *options_hadolint
           
 #  merged:
