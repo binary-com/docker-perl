@@ -1,6 +1,13 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.3
+parameters:
+  tag:
+    type: string
+    default: 'latest'
+  registry:
+    type: string
+    default: 'docker.io'
 aliases:
   - &filter_only_master
       branches:
@@ -12,7 +19,7 @@ aliases:
       ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006,DL3005
   - &options_workflow_perl
       context: perl
-      name: perl
+      image: deriv/perl
   - &options_workflow_perl_push
       push: true
       filters: *filter_only_master
@@ -21,7 +28,6 @@ aliases:
       requires:
         - perl
       context: perl
-      name: dzil
       image: deriv/dzil
       path: dzil/
       docker-context: dzil/
@@ -30,14 +36,11 @@ aliases:
       filters: *filter_only_master
       <<: *options_workflow_dzil
 jobs:
-  build_and_publish:
+  build_amd64:
     executor:
       name: docker/machine
-      image: ubuntu-2004:202107-02
+      image: ubuntu-2204:2022.07.1
     parameters:
-      push:
-        type: boolean
-        default: false
       image:
         type: string
         default: deriv/perl
@@ -53,41 +56,93 @@ jobs:
           image: <<parameters.image>>
           path: <<parameters.path>>
           docker-context: <<parameters.docker-context>>
-          tag: 'latest'
+          tag: amd64-<<pipeline.parameters.tag>>
+  build_arm64:
+    executor:
+      name: docker/machine
+      image: ubuntu-2204:2022.07.1
+    resource_class: arm.medium
+    parameters:
+      image:
+        type: string
+        default: deriv/perl
+      path:
+        type: string
+        default: .
+      docker-context:
+        type: string
+        default: .
+    steps:
+      - checkout
+      - docker/build:
+          image: <<parameters.image>>
+          path: <<parameters.path>>
+          docker-context: <<parameters.docker-context>>
+          tag: arm64-<<pipeline.parameters.tag>>
+  publish:
+    executor: docker/docker
+    parameters:
+      image:
+        type: string
+        default: deriv/perl
+      push:
+        type: boolean
+        default: false
+      path:
+        type: string
+        default: .
+      docker-context:
+        type: string
+        default: .
+    steps:
+      - run: echo build
       - when:
           condition: <<parameters.push>>
           steps:
             - run:
                 name: Docker Hub login
                 command: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-            - docker/push:
-                image: <<parameters.image>>
-                tag: 'latest'
+            - deploy:
+                name: "Upload manifest to registry"
+                command: |
+                  set -eu
+                  export DOCKER_CLI_EXPERIMENTAL=enabled
+                  docker manifest create \
+                    ${DOCKER_REGISTRY}/<<parameters.image>>:<<pipeline.parameters.tag>> \
+                    ${DOCKER_REGISTRY}/<<parameters.image>>:arm64-<<pipeline.parameters.tag>> \
+                    ${DOCKER_REGISTRY}/<<parameters.image>>:amd64-<<pipeline.parameters.tag>>
+                  docker manifest push ${DOCKER_REGISTRY}/<<parameters.image>>:<<pipeline.parameters.tag>>
+
 workflows:
   version: 2
   build-workflow:
     jobs:
-      - build_and_publish: *options_workflow_perl
-      - build_and_publish: *options_workflow_dzil
+      - build_amd64: *options_workflow_perl
+      - build_arm64: *options_workflow_perl
+      - publish:
+          <<: *options_workflow_perl
+          requires:
+            - build_amd64
+            - build_arm64
       - docker/hadolint: *options_hadolint
           
-  merged:
-    jobs:
-      - build_and_publish: *options_workflow_perl_push
-      - build_and_publish: *options_workflow_dzil_push
-      - docker/hadolint:
-          <<: *options_hadolint
-          filters: *filter_only_master
-  tagged:
-    jobs:
-      - build_and_publish: *options_workflow_perl_push
-      - build_and_publish: *options_workflow_dzil_push
-  daily:
-    jobs:
-      - build_and_publish: *options_workflow_perl_push
-      - build_and_publish: *options_workflow_dzil_push
-      - docker/hadolint: *options_hadolint
-    triggers:
-      - schedule:
-          cron: 05 19 * * *
-          filters: *filter_only_master
+#  merged:
+#    jobs:
+#      - build_and_publish: *options_workflow_perl_push
+#      - build_and_publish: *options_workflow_dzil_push
+#      - docker/hadolint:
+#          <<: *options_hadolint
+#          filters: *filter_only_master
+#  tagged:
+#    jobs:
+#      - build_and_publish: *options_workflow_perl_push
+#      - build_and_publish: *options_workflow_dzil_push
+#  daily:
+#    jobs:
+#      - build_and_publish: *options_workflow_perl_push
+#      - build_and_publish: *options_workflow_dzil_push
+#      - docker/hadolint: *options_hadolint
+#    triggers:
+#      - schedule:
+#          cron: 05 19 * * *
+#          filters: *filter_only_master
