@@ -117,14 +117,33 @@ workflows:
   version: 2
   build-workflow:
     jobs:
-      - build_amd64: *options_workflow_perl
-      - build_arm64: *options_workflow_perl
+      - build_amd64:
+          << *options_workflow_perl
+          name: perl_amd64
+      - build_arm64:
+          << *options_workflow_perl
+          name: perl_arm64
       - publish:
           <<: *options_workflow_perl
+          name: publish_perl
           context: perl
           requires:
-            - build_amd64
-            - build_arm64
+            - perl_amd64
+            - perl_arm64
+          push: true
+      - build_amd64:
+          << *options_workflow_dzil
+          name: dzil_amd64
+      - build_arm64:
+          << *options_workflow_dzil
+          name: dzil_arm64
+      - publish:
+          <<: *options_workflow_dzil
+          name: publish_dzil
+          context: perl
+          requires:
+            - dzil_amd64
+            - dzil_arm64
           push: true
       - docker/hadolint: *options_hadolint
           
