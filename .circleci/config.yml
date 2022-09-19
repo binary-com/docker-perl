@@ -24,5 +24,5 @@ jobs:
               docker context create ctx
               docker buildx create --use --driver docker-container --platform linux/arm64,linux/arm/v8,linux/amd64 ctx
       - run: docker buildx inspect --bootstrap
-      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push -t docker.io/deriv/perl:multi-platform .
-      - run: docker buildx build --platform linux/amd64,linux/arm64 --pull --push -t docker.io/deriv/dzil:multi-platform dzil/
+      - run: docker buildx build --platform linux/amd64,linux/arm64 --progress plain --pull --push -t docker.io/deriv/perl:multi-platform .
+      - run: docker buildx build --platform linux/amd64,linux/arm64 --progress plain --pull --push -t docker.io/deriv/dzil:multi-platform dzil/
