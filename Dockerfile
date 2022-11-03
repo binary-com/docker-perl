@@ -51,7 +51,8 @@ ENV PATH="/opt/perl-${PERL_VERSION}/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local
 
 ONBUILD ARG HTTP_PROXY
 ONBUILD WORKDIR /app/
-ONBUILD COPY cpanfile aptfile /app/
+# Conditional copy - we want whichever files exist, and we'd typically expect to see at least one
+ONBUILD COPY aptfil[e] cpanfil[e] /app/
 
 # Install everything in the aptfile first, as system deps, then
 # go through the CPAN deps. Once those are all done, remove anything
