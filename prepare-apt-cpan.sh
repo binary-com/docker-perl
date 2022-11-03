@@ -37,6 +37,9 @@ if [ -d /app/vendors ]; then
         if [ -e cpanfile ]; then
             cpanm --notest --installdeps --with-recommends .
         fi
+        if [ -e dist.ini ]; then
+            dzil authordeps | cpanm -n
+        fi
     done
 
     echo "export PERL5LIB=$PERL5LIB" >> ~/.bashrc
