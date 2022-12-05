@@ -86,6 +86,7 @@ jobs:
           name: 'Docker build'
           command: |
             docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPO}:arm64-${CIRCLE_SHA1} .
+            docker push ${DOCKER_REGISTRY}/${DOCKER_REPO}:arm64-${CIRCLE_SHA1}
 
   create_amd64_image:
     machine:
@@ -99,6 +100,7 @@ jobs:
           name: 'Docker build'
           command: |
             docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPO}:amd64-${CIRCLE_SHA1} .
+            docker push ${DOCKER_REGISTRY}/${DOCKER_REPO}:amd64-${CIRCLE_SHA1}
 
 workflows:
   version: 2
