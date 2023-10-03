@@ -22,4 +22,6 @@ jobs:
         with:
           publish: false
           image: deriv/perl:latest 
-
+      -
+        name: Docker image info
+        run: docker image ls
