@@ -23,6 +23,19 @@ jobs:
           context: '.'
           tags: deriv/perl
           push: false
+  dzil:
+    runs-on: ubuntu-latest
+    steps:
       -
-        name: Docker image info
-        run: docker image ls
+        name: Checkout code
+        uses: actions/checkout@v4
+      -
+        name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: 'dzil/'
+          tags: deriv/dzil
+          push: false   
+      -
+        name: docker image info
+        run: docker image ls 
