@@ -18,10 +18,11 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Build Docker Image
-        uses: ./.github/actions/build_and_publish
+        uses: docker/build-push-action@v5
         with:
-          publish: false
-          image: deriv/perl:latest 
+          context: '.'
+          tags: deriv/perl
+          push: false
       -
         name: Docker image info
         run: docker image ls
