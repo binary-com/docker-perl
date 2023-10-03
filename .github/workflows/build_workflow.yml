@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Build Docker Image
-        uses: ./.github/actoins/build_and_publish
+        uses: ./.github/actions/build_and_publish
         with:
           publish: false
           image: deriv/perl:latest 
