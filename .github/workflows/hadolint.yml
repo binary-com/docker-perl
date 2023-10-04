@@ -27,7 +27,7 @@ jobs:
       - 
         name: Lint Dockerfiles
         run: |
-          export HADOLINT_IGNORE='${{inputs.ignore-rules}}' 
+          echo $HADOLINT_IGNORE
           IFS=':' read -ra files <<< "${{inputs.dockerfiles}}"
           for i in "${files[@]}"; do
             echo "Running Linter on $i"
