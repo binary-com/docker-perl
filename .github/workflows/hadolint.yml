@@ -26,9 +26,10 @@ jobs:
           sudo chmod +x /usr/bin/hadolint
       - 
         name: Lint Dockerfiles
-        run: | 
+        run: |
+          export HADOLINT_IGNORE='${{inputs.ignore-rules}}' 
           IFS=':' read -ra files <<< "${{inputs.dockerfiles}}"
           for i in "${files[@]}"; do
             echo "Running Linter on $i"
-            HADOLINT_IGNORE='${{inputs.ignore-rules}}' hadolint $i
+            hadolint $i
           done
