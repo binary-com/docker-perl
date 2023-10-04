@@ -42,5 +42,5 @@ jobs:
   hadolint:
     uses: ./.github/workflows/hadolint.yml
     with:
-      ignore-rules: DL3008,SC2046,DL3003,DL4006,DL3006,DL3005
-      dockerfiles: Dockerfile:dzil/Dockerfile
+      ignore-rules: 'DL3008,SC2046,DL3003,DL4006,DL3006,DL3005'
+      dockerfiles: 'Dockerfile:dzil/Dockerfile'

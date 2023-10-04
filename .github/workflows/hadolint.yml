@@ -29,5 +29,6 @@ jobs:
         run: | 
           IFS=':' read -ra files <<< "${{inputs.dockerfiles}}"
           for i in "${files[@]}"; do
+            echo "Running Linter on $1"
             hadolint $i
           done
