@@ -13,7 +13,7 @@ jobs:
           sudo wget -O /usr/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64
           sudo chmod +x /usr/bin/hadolint
       - 
-        name: Lint Dockerfile
+        name: Lint perl Dockerfile
         run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignore DL3006 --ignore DL3005 Dockerfile
       - 
         name: Lint dzil Dockerfile
