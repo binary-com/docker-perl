@@ -1,0 +1,33 @@
+on:
+  workflow_call:
+    inputs:
+      ignore-rules:
+        description: 'Rules to Ignore when running the linter'
+        required: false
+        default: ''
+        type: string  
+      dockerfiles: 
+        description: 'Path to docker files. Seperated by (:)'
+        required: true
+        type: string
+  jobs:
+    hadolint:
+      runs-on: ubuntu-latest
+      env:
+        HADOLINT_IGNORE: ${{ inputs.ignore-rules }}
+      steps:
+        - 
+          name: Checkout Code
+          uses: actions/checkout@v3
+        -
+          name: Install hadolint
+          run: | 
+            sudo wget -O /usr/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64
+            sudo chmod +x /usr/bin/hadolint
+        - 
+          name: Lint Dockerfiles
+          run: | 
+            IFS=':' read -ra files <<< "${{inputs.dockerfiles}}"
+            for i in "${files[@]}"; do
+              hadolint $i
+            done
