@@ -21,7 +21,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: '.'
-          tags: deriv/perl
+          tags: deriv/perl:latest
           push: false
   dzil:
     needs: perl
@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: 'dzil/'
-          tags: deriv/dzil
+          tags: deriv/dzil:latest
           push: false   
       -
         name: docker image info
