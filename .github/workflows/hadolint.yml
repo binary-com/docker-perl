@@ -1,20 +1,8 @@
 on:
   workflow_call:
-    inputs:
-      ignore-rules:
-        description: 'Rules to Ignore when running the linter'
-        required: false
-        default: ''
-        type: string  
-      dockerfiles: 
-        description: 'Path to docker files. Seperated by (:)'
-        required: true
-        type: string
 jobs:
   hadolint:
     runs-on: ubuntu-latest
-    env:
-      HADOLINT_IGNORE: ${{ inputs.ignore-rules }}
     steps:
       - 
         name: Checkout Code
@@ -25,11 +13,8 @@ jobs:
           sudo wget -O /usr/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64
           sudo chmod +x /usr/bin/hadolint
       - 
-        name: Lint Dockerfiles
-        run: |
-          echo $HADOLINT_IGNORE
-          IFS=':' read -ra files <<< "${{inputs.dockerfiles}}"
-          for i in "${files[@]}"; do
-            echo "Running Linter on $i"
-            hadolint $i
-          done
+        name: Lint Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignoreDL3006 --ignore DL3005 Dockerfile
+      - 
+        name: Lint dzil Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignoreDL3006 --ignore DL3005 dzil/Dockerfile
