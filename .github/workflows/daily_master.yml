@@ -26,7 +26,6 @@ jobs:
           tags: deriv/perl:test
           push: true
   dzil:
-    needs: perl
     runs-on: ubuntu-latest
     steps:
       -
