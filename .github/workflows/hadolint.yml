@@ -14,7 +14,7 @@ jobs:
           sudo chmod +x /usr/bin/hadolint
       - 
         name: Lint Dockerfile
-        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignoreDL3006 --ignore DL3005 Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignore DL3006 --ignore DL3005 Dockerfile
       - 
         name: Lint dzil Dockerfile
-        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignoreDL3006 --ignore DL3005 dzil/Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignore DL3006 --ignore DL3005 dzil/Dockerfile
