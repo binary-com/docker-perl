@@ -43,6 +43,6 @@ jobs:
         with:
           context: 'dzil/'
           tags: deriv/dzil:test
-          push: false   
+          push: true   
   hadolint:
     uses: ./.github/workflows/hadolint.yml
