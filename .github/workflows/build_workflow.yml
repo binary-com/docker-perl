@@ -37,8 +37,5 @@ jobs:
           context: 'dzil/'
           tags: deriv/dzil:latest
           push: false   
-      -
-        name: docker image info
-        run: docker image ls 
   hadolint:
     uses: ./.github/workflows/hadolint.yml
