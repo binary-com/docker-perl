@@ -1,14 +1,10 @@
-name: Build workflow
-run-name: Build workflow
+name: Merged 
+run-name: Merged
 on:
   workflow_dispatch:
   push:
     branches:
       - master
-  pull_request:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 jobs:
   perl:
     runs-on: ubuntu-latest
@@ -16,13 +12,19 @@ jobs:
       -
         name: Checkout code
         uses: actions/checkout@v4
+      - 
+        name: Docker Login
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build Docker Image
+        name: Build And Publish Docker Image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: '.'
           tags: deriv/perl:latest
-          push: false
+          push: true
   dzil:
     needs: perl
     runs-on: ubuntu-latest
@@ -30,12 +32,18 @@ jobs:
       -
         name: Checkout code
         uses: actions/checkout@v4
+      - 
+        name: Docker Login
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build Docker Image
+        name: Build And Publish Docker Image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: 'dzil/'
           tags: deriv/dzil:latest
-          push: false   
+          push: true   
   hadolint:
     uses: ./.github/workflows/hadolint.yml

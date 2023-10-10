@@ -1,0 +1,20 @@
+on:
+  workflow_call:
+jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Checkout Code
+        uses: actions/checkout@v4
+      -
+        name: Install hadolint
+        run: | 
+          sudo wget -O /usr/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+          sudo chmod +x /usr/bin/hadolint
+      - 
+        name: Lint perl Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignore DL3006 --ignore DL3005 Dockerfile
+      - 
+        name: Lint dzil Dockerfile
+        run: hadolint --ignore DL3008 --ignore SC2046 --ignore DL3003 --ignore DL4006 --ignore DL3006 --ignore DL3005 dzil/Dockerfile
