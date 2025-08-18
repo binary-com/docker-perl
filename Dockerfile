@@ -1,5 +1,5 @@
 # This is the layer that can run things
-FROM debian:stable
+FROM debian:13-slim
 LABEL maintainer="Deriv Services Ltd <DERIV@cpan.org>"
 
 # Some standard server-like config used everywhere
