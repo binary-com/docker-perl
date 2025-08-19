@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - perl_40
   pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

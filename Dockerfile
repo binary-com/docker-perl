@@ -1,12 +1,12 @@
 # This is the layer that can run things
-FROM debian:stable
+FROM debian:13-slim
 LABEL maintainer="Deriv Services Ltd <DERIV@cpan.org>"
 
 # Some standard server-like config used everywhere
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PERL_VERSION=5.36.0
-ENV PERL_SHA256=0f386dccbee8e26286404b2cca144e1005be65477979beb9b1ba272d4819bcf0
+ENV PERL_VERSION=5.40.0
+ENV PERL_SHA256=d5325300ad267624cb0b7d512cfdfcd74fa7fe00c455c5b51a6bd53e5e199ef9
 ENV CPANM_VERSION=1.7045
 ENV CPANM_SHA256=ac4e4adc23fec0ab54f088aca511f5a57d95e6c97a12a1cb98eed1fe0fe0e99c
 

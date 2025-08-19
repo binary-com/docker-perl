@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - master
+      - perl_40
+
+env:
+  BRANCH_NAME: ${{ github.ref_name == 'master' && 'latest' ||  github.ref_name }}
+
 jobs:
   perl:
     runs-on: ubuntu-latest
@@ -23,7 +28,7 @@ jobs:
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: '.'
-          tags: deriv/perl:latest
+          tags: deriv/perl:${{env.BRANCH_NAME}}
           push: true
   dzil:
     needs: perl
@@ -39,11 +44,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Pull the associated perl image
+        run: |
+          docker pull deriv/perl:${{env.BRANCH_NAME}}
+          docker tag deriv/perl:${{env.BRANCH_NAME}} deriv/perl:latest
+      -
         name: Build And Publish Docker Image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: 'dzil/'
-          tags: deriv/dzil:latest
+          tags: deriv/dzil:${{env.BRANCH_NAME}}
           push: true   
   hadolint:
     uses: ./.github/workflows/hadolint.yml
